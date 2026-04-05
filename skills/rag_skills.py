@@ -41,7 +41,7 @@ if __name__ == "__main__":
     
     # Simulate a query issued by the Agent
     # Update this query based on the actual content in your data/ folder
-    test_query = "Samsung processors" 
+    test_query = "display information" 
     
     print(f"Executing query: {test_query}")
     result = search_product_knowledge.invoke({"query": test_query})
