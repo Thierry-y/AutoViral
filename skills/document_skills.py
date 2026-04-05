@@ -1,55 +1,62 @@
 import os
+from typing import List
 from langchain_community.document_loaders import (
+    DirectoryLoader,
     PyPDFLoader,
     UnstructuredWordDocumentLoader,
     UnstructuredPowerPointLoader,
     UnstructuredODTLoader
 )
+from langchain_core.documents import Document
 
-def read_local_document(file_path: str) -> str:
-    """
-    Read local documents (supports PDF, DOCX, PPTX, ODT) and extract plain text.
-    """
-    # Check if the file exists
-    if not os.path.exists(file_path):
-        return f"System Prompt: File not found at {file_path}. Please check the path."
+# Mapping between file extensions and their corresponding loaders
+LOADER_MAPPING = {
+    ".pdf": PyPDFLoader,
+    ".docx": UnstructuredWordDocumentLoader,
+    ".doc": UnstructuredWordDocumentLoader,
+    ".pptx": UnstructuredPowerPointLoader,
+    ".ppt": UnstructuredPowerPointLoader,
+    ".odt": UnstructuredODTLoader,
+}
 
-    # Get file extension
-    extension = file_path.split('.')[-1].lower()
-    print(f"Parsing {extension.upper()} file...")
+def load_all_documents_from_data(data_dir: str = "data") -> List[Document]:
+    """
+    Scans all supported documents in the specified directory and returns a list of LangChain Documents.
+    """
+    if not os.path.exists(data_dir):
+        print(f"❌ Error: Directory '{data_dir}' does not exist.")
+        return []
+
+    all_docs = []
     
-    try:
-        if extension == 'pdf':
-            loader = PyPDFLoader(file_path)
-            
-        elif extension in ['doc', 'docx']:
-            loader = UnstructuredWordDocumentLoader(file_path)
-            
-        elif extension in ['ppt', 'pptx']:
-            loader = UnstructuredPowerPointLoader(file_path)
+    # Iterate through the mapping and load each file format
+    for ext, loader_class in LOADER_MAPPING.items():
+        # Using glob pattern to recursively find all files with the specific extension
+        print(f"📂 Scanning for {ext} files...")
+        loader = DirectoryLoader(
+            data_dir,
+            glob=f"**/*{ext}",
+            loader_cls=loader_class,
+            show_progress=True,
+            use_multithreading=True
+        )
+        
+        try:
+            sub_docs = loader.load()
+            if sub_docs:
+                print(f"✅ Successfully loaded {len(sub_docs)} chunks from {ext} files.")
+                all_docs.extend(sub_docs)
+        except Exception as e:
+            print(f"⚠️ Error occurred while loading {ext} format: {e}")
 
-        elif extension == 'odt': 
-            loader = UnstructuredODTLoader(file_path)
-            
-        else:
-            return f"System Prompt: File format .{extension} is not currently supported."
-            
-        # Execute loading and merge text content
-        documents = loader.load()
-        text_content = "\n".join([doc.page_content for doc in documents])
-        
-        print(f"Parsing successful! Extracted {len(text_content)} characters.")
-        return text_content
-        
-    except Exception as e:
-        return f"System Prompt: An unknown error occurred while reading the file: {str(e)}"
+    print(f"\n✨ Scan complete! Total document chunks loaded: {len(all_docs)}")
+    return all_docs
 
 # =========================================
 # Local Testing Code 
 # =========================================
 if __name__ == "__main__":
-    # Ensure this path matches your local environment
-    test_file = "data/leaflet.pdf"
-    content = read_local_document(test_file)
-    print(content)
-    print("Document loader module loaded successfully.")
+    docs = load_all_documents_from_data()
+    if docs:
+        print(f"Preview of the first chunk: {docs[0].page_content[:200]}...")
+        print(f"Source Metadata: {docs[0].metadata}")
