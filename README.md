@@ -27,7 +27,7 @@ If the document is too long (e.g., massive product manuals or industry reports),
 ## 📂 Project Structure
 
 ```text
-my_marketing_agent/
+AutoViral/
 ├── data/           # Drop your product documents here (PDF, DOCX, PPTX, etc.).
 ├── db/             # Automatically generated local Chroma vector database.
 ├── prompts/        # Contains prompt templates (e.g., Xiaohongshu master prompts).
