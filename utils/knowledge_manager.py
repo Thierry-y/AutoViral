@@ -3,7 +3,7 @@ from langchain_classic.indexes import index, SQLRecordManager
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from utils.document_skills import load_all_documents_from_data
+from utils.document_utils import load_all_documents_from_data
 
 def sync_knowledge_base():
     """
