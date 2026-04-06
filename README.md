@@ -4,10 +4,25 @@ An intelligent, fully local AI agent designed to generate high-converting market
 
 ## 🌟 Key Features: Dynamic Context Routing
 
-To achieve the best possible copywriting results without sacrificing system stability, this program dynamically chooses how to process your product documents based on their total text length:
+To achieve the best possible copywriting results without sacrificing system stability, this program dynamically chooses how to process your product documents based on their total text length.
 
-* **🟢 Context Stuffing Mode (Short Texts):** If the total extracted text from your documents is under a certain threshold (e.g., 11,451 characters), the program directly injects the entire text into the LLM's system prompt. This gives the AI a perfect, global understanding of the product for more coherent and profound copywriting.
-* **🔴 RAG Agent Mode (Long Texts):** If the document is too long (e.g., massive product manuals or industry reports), the system automatically switches to a Retrieval-Augmented Generation (RAG) workflow. It chunks the text, updates a local Chroma vector database, and equips the Agent with a search tool (`search_product_knowledge`) to retrieve relevant information on demand.
+### 🟢 Context Stuffing Mode (Short Texts)
+If the total extracted text from your documents is under a certain threshold (e.g., 11,451 characters), the program directly injects the entire text into the LLM's system prompt. This gives the AI a perfect, global understanding of the product for more coherent and profound copywriting.
+
+> **Demo: Full Context Mode**
+> 
+> *The system detects a short document, enters Full Context Mode, and successfully generates a Xiaohongshu post with interactive multi-turn title selection.*
+> 
+> ![Full Context Mode Demo](assets/stuffing_mode.png)
+
+### 🔴 RAG Agent Mode (Long Texts)
+If the document is too long (e.g., massive product manuals or industry reports), the system automatically switches to a Retrieval-Augmented Generation (RAG) workflow. It chunks the text, updates a local Chroma vector database, and equips the Agent with a search tool (`search_product_knowledge`) to retrieve relevant information on demand.
+
+> **Demo: RAG Agent Mode**
+> 
+> *The system detects long documents, syncs the Chroma database, and acts as an Agent to retrieve specific data before writing the copy.*
+> 
+> ![RAG Agent Mode Demo](assets/rag_mode.png)
 
 ## 📂 Project Structure
 
